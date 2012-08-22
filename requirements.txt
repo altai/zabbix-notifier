@@ -1,0 +1,4 @@
+Flask>=0.9
+Flask-Mail>=0.6.1
+Flask-SQLAlchemy
+Jinja2

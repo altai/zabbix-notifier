@@ -1,0 +1,7 @@
+Dear admin!
+
+We notify you that {{item.key_}} is currently {%if not satisfied%} not{%endif%} satisfied for host {{host.name}}.
+Current value is {{item.lastvalue}}
+
+Cincerely,
+Zabbix Notification Robot
