@@ -27,17 +27,30 @@ import sys
 import thread
 
 
+LOG_FILE = "/var/log/zabbix-notifier/zabbix-notifier.log"
+
+
 def main():
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument("--sync-db", default=False,
                             action="store_true", help="synchronize database")
+    arg_parser.add_argument("--debug", "-d", default=False,
+                            action="store_true", help="debug")
     arg_parser.add_argument("--reloader", "-r", default=False,
                             action="store_true", help="start with reloader")
     arg_parser.add_argument("host:port", nargs="?",
                             default="127.0.0.1:18080", help="host:port")
     args = arg_parser.parse_args()
 
-    logging.basicConfig(level=logging.DEBUG)
+    from zabbix_notifier import app
+    handler = logging.FileHandler(LOG_FILE)
+    LOG = logging.getLogger()
+    LOG.addHandler(handler)
+    log_level = logging.getLevelName(app.config.get("LOG_LEVEL", "WARNING"))
+    if not isinstance(log_level, int):
+        log_level = logging.WARNING
+    LOG.setLevel(log_level)
+
     if args.sync_db:
         from zabbix_notifier import database
         return
@@ -47,8 +60,7 @@ def main():
         thread.start_new_thread(poller.poller_thread, ())
 
     listen = getattr(args, "host:port").split(':')
-    from zabbix_notifier import app
-    app.debug = True
+    app.debug = log_level == logging.DEBUG
     app.run(host=listen[0], port=int(listen[1]),
             use_reloader=args.reloader)
 
