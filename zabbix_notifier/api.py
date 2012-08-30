@@ -174,8 +174,11 @@ def item_info_delete(id_or_key):
 def items_get():
     fields = ("key_", "name", "description")
     field_filter = get_filter_parameters(fields)
-    client = poller.get_zabbix_client()
-    item_list = client.item.get({"output": "extend"})
+    try:
+        client = poller.get_zabbix_client()
+        item_list = client.item.get({"output": "extend"})
+    except:
+        return Response("Cannot query zabbix server", status=503)
 
     def is_acceptable(item):
         for key, value in field_filter.iteritems():

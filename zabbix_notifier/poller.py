@@ -51,7 +51,6 @@ def alarm_handler():
         ((ii.key_, ii)
          for ii in db.session.query(database.ItemInfo).all()))
     client = get_zabbix_client()
-    client.login()
     item_list = client.item.get({"output": "extend"})
     host_list = client.host.get({"output": "extend"})
     now = time.time()
