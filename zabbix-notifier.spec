@@ -1,5 +1,3 @@
-%global with_doc 0
-
 %if ! (0%{?fedora} > 12 || 0%{?rhel} > 5)
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
 %endif
@@ -43,11 +41,6 @@ Requires:         start-stop-daemon
 %{__python} setup.py install -O1 --skip-build --prefix=%{_prefix} --root=%{buildroot}
 install -p -d -m755 %{buildroot}%{_datarootdir}/%{name}
 install -p -m644 data/* %{buildroot}%{_datarootdir}/%{name}
-
-%if 0%{?with_doc}
-export PYTHONPATH=%{buildroot}%{python_sitelib}
-make -C doc html
-%endif
 
 cd redhat
 for script in *.init; do
